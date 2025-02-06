@@ -10,13 +10,13 @@ import matplotlib.pyplot as plt
 class SimpleDrivingEnv(gym.Env):
 	metadata = {'render.modes': ['human']}
 
-	def __init__(self):
+	def __init__(self, use_gui=False):
 		#super(SimpleDrivingEnv, self).__init__()
 		self.action_space = gym.spaces.box.Box(low=np.array([0, -0.6], dtype=np.float32), high=np.array([1, 0.6], dtype=np.float32))
 		self.observation_space = gym.spaces.box.Box(low=np.array([-10, -10, -1, -1, -5, -5, -10, -10], dtype=np.float32), high=np.array([10, 10, 1, 1, 5, 5, 10, 10], dtype=np.float32))
 		self.np_random, _ = gym.utils.seeding.np_random()
 
-		self.client = p.connect(p.DIRECT)
+		self.client = p.connect(p.GUI if use_gui else p.DIRECT)
 		# Reduce length of episodes for RL algorithms
 		p.setTimeStep(1/30, self.client)
 

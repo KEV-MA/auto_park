@@ -1,16 +1,23 @@
 import gym
 import time
 import torch
+import argparse
 from agent import TRPOAgent
 from stable_baselines3 import A2C
 
 LOAD_AGENT="parking_agent_v0"
 
 def main():
+	parser = argparse.ArgumentParser(description='Auto Park - TRPO Agent')
+	parser.add_argument('--run-only', action='store_true', help='Only run the trained agent without training')
+	parser.add_argument('--gui', action='store_true', help='Enable GUI visualization mode')
+	args = parser.parse_args()
+
 	# register environment
 	gym.envs.registration.register(
 		id="ParkingEnv-v0",
 		entry_point="sim_env.simple_driving_env:SimpleDrivingEnv",
+		kwargs={"use_gui": args.gui}
 	)
 	
 	# create agent
@@ -19,8 +26,10 @@ def main():
 	agent = TRPOAgent(policy=nn)
 
 	agent.load_model("agent.pth")
-	agent.train("ParkingEnv-v0", seed=0, batch_size=5000, iterations=100, max_episode_length=250, verbose=True)
-	agent.save_model("agent.pth")
+
+	if not args.run_only:
+		agent.train("ParkingEnv-v0", seed=0, batch_size=5000, iterations=100, max_episode_length=250, verbose=True)
+		agent.save_model("agent.pth")
 
 	# create environment
 	env = gym.make("ParkingEnv-v0")

@@ -50,15 +50,17 @@ The project requires the following main packages:
 To run the trained model:
 
 ```bash
-python main.py
+python main.py  # Run with training
+python main.py --run-only  # Run without training
 ```
 
 The script will:
 1. Load the pre-trained TRPO agent from `agent.pth`
-2. Create a parking environment
-3. Run the simulation showing the car navigating to random goal points
-4. Display the reward at each step
-5. Automatically reset when the goal is reached
+2. If not using `--run-only`, train the agent for additional iterations
+3. Create a parking environment
+4. Run the simulation showing the car navigating to random goal points
+5. Display the reward at each step
+6. Automatically reset when the goal is reached
 
 ## Project Structure
 
