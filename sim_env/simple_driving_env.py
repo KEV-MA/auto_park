@@ -5,23 +5,26 @@ import pybullet as p
 from sim_env.car import Car
 from sim_env.plane import Plane
 from sim_env.goal import Goal
+from sim_env.obstacle import Obstacle
 import matplotlib.pyplot as plt
 
 class SimpleDrivingEnv(gym.Env):
 	metadata = {'render.modes': ['human']}
 
-	def __init__(self):
+	def __init__(self, use_gui=False, num_obstacles=5):
 		#super(SimpleDrivingEnv, self).__init__()
 		self.action_space = gym.spaces.box.Box(low=np.array([0, -0.6], dtype=np.float32), high=np.array([1, 0.6], dtype=np.float32))
-		self.observation_space = gym.spaces.box.Box(low=np.array([-10, -10, -1, -1, -5, -5, -10, -10], dtype=np.float32), high=np.array([10, 10, 1, 1, 5, 5, 10, 10], dtype=np.float32))
+		self.observation_space = gym.spaces.box.Box(low=np.array([-10, -10, -1, -1, -5, -5, -10, -10, -10, -10], dtype=np.float32), high=np.array([10, 10, 1, 1, 5, 5, 10, 10, 10, 10], dtype=np.float32))
 		self.np_random, _ = gym.utils.seeding.np_random()
 
-		self.client = p.connect(p.DIRECT)
+		self.client = p.connect(p.GUI if use_gui else p.DIRECT)
 		# Reduce length of episodes for RL algorithms
 		p.setTimeStep(1/30, self.client)
 
 		self.car = None
 		self.goal = None
+		self.obstacles = []
+		self.num_obstacles = num_obstacles
 		self.done = False
 		self.prev_dist_to_goal = None
 		self.prev_orientation = None
@@ -42,6 +45,15 @@ class SimpleDrivingEnv(gym.Env):
 		heading_to_goal = np.dot(car_vel_vector / np.linalg.norm(car_vel_vector), goal_traj_vector / np.linalg.norm(goal_traj_vector))
 		car_heading = math.atan2(car_ob[3], car_ob[2])
 		
+		# Check for collisions with obstacles
+		car_id, _ = self.car.get_ids()
+		for obstacle in self.obstacles:
+			obstacle_id, _ = obstacle.get_ids()
+			if len(p.getContactPoints(car_id, obstacle_id)) > 0:
+				self.done = True
+				obs = list(car_ob) + list(self.goal) + self._get_closest_obstacle(car_ob)
+				return np.array(obs, dtype=np.float32), -100, self.done, dict()
+		
 		w_dist_speed = 4
 		w_heading_speed = 1
 		w_heading = 2
@@ -58,8 +70,22 @@ class SimpleDrivingEnv(gym.Env):
 			self.done = True
 			reward = 100
 
-		ob = np.array(car_ob + self.goal, dtype=np.float32)
-		return ob, reward, self.done, dict()
+		obs = list(car_ob) + list(self.goal) + self._get_closest_obstacle(car_ob)
+		return np.array(obs, dtype=np.float32), reward, self.done, dict()
+
+	def _get_closest_obstacle(self, car_pos):
+		closest_dist = float('inf')
+		closest_pos = [0, 0]
+		
+		for obstacle in self.obstacles:
+			obstacle_id, _ = obstacle.get_ids()
+			pos = p.getBasePositionAndOrientation(obstacle_id)[0]
+			dist = math.sqrt((car_pos[0] - pos[0])**2 + (car_pos[1] - pos[1])**2)
+			if dist < closest_dist:
+				closest_dist = dist
+				closest_pos = [pos[0], pos[1]]
+		
+		return closest_pos
 
 	def seed(self, seed=None):
 		self.np_random, seed = gym.utils.seeding.np_random(seed)
@@ -82,12 +108,24 @@ class SimpleDrivingEnv(gym.Env):
 		# Visual element of the goal
 		Goal(self.client, self.goal)
 
+		# Add random obstacles
+		self.obstacles = []
+		for _ in range(self.num_obstacles):
+			while True:
+				x = self.np_random.uniform(-8, 8)
+				y = self.np_random.uniform(-8, 8)
+				# Check if position is far enough from car start and goal
+				if math.sqrt(x*x + y*y) > 2 and math.sqrt((x-self.goal[0])**2 + (y-self.goal[1])**2) > 2:
+					self.obstacles.append(Obstacle(self.client, (x, y)))
+					break
+
 		# Get observation to return
 		car_ob = self.car.get_observation()
 
 		self.prev_dist_to_goal = math.sqrt(((car_ob[0] - self.goal[0]) ** 2 + (car_ob[1] -self.goal[1]) ** 2))
 		self.prev_heading = math.atan2(car_ob[3], car_ob[2])
-		return np.array(car_ob + self.goal, dtype=np.float32)
+		obs = list(car_ob) + list(self.goal) + self._get_closest_obstacle(car_ob)
+		return np.array(obs, dtype=np.float32)
 
 	def render(self, mode='human'):
 		if self.rendered_img is None:

@@ -14,7 +14,7 @@ def main():
 	)
 	
 	# create agent
-	nn = torch.nn.Sequential(torch.nn.Linear(8, 64), torch.nn.Tanh(),
+	nn = torch.nn.Sequential(torch.nn.Linear(10, 64), torch.nn.Tanh(),
 		     torch.nn.Linear(64, 2))
 	agent = TRPOAgent(policy=nn)
 
