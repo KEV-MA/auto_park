@@ -2,13 +2,13 @@ import gym
 import time
 import torch
 import argparse
-from agent import TRPOAgent
+from agent import PPOAgent
 from stable_baselines3 import A2C
 
 LOAD_AGENT="parking_agent_v0"
 
 def main():
-	parser = argparse.ArgumentParser(description='Auto Park - TRPO Agent')
+	parser = argparse.ArgumentParser(description='Auto Park - PPO Agent')
 	parser.add_argument('--run-only', action='store_true', help='Only run the trained agent without training')
 	parser.add_argument('--gui', action='store_true', help='Enable GUI visualization mode')
 	args = parser.parse_args()
@@ -23,7 +23,7 @@ def main():
 	# create agent
 	nn = torch.nn.Sequential(torch.nn.Linear(8, 64), torch.nn.Tanh(),
 		     torch.nn.Linear(64, 2))
-	agent = TRPOAgent(policy=nn)
+	agent = PPOAgent(policy=nn)
 
 	agent.load_model("agent.pth")
 

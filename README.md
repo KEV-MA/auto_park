@@ -1,10 +1,10 @@
 # Auto Park
 
-A reinforcement learning project for ME 599 at the University of Waterloo that demonstrates autonomous parking capabilities using Trust Region Policy Optimization (TRPO). The model successfully navigates a car from a starting position to randomly generated goal points.
+A reinforcement learning project for ME 599 at the University of Waterloo that demonstrates autonomous parking capabilities using Trust Region Policy Optimization (PPO). The model successfully navigates a car from a starting position to randomly generated goal points.
 
 ## Project Overview
 
-This project implements a TRPO (Trust Region Policy Optimization) reinforcement learning algorithm to train a car agent to navigate to randomly generated parking spots. The model has been successfully trained to:
+This project implements a PPO (Trust Region Policy Optimization) reinforcement learning algorithm to train a car agent to navigate to randomly generated parking spots. The model has been successfully trained to:
 - Navigate from any starting position
 - Reach randomly generated goal points
 - Avoid obstacles (if present)
@@ -55,7 +55,7 @@ python main.py --run-only  # Run without training
 ```
 
 The script will:
-1. Load the pre-trained TRPO agent from `agent.pth`
+1. Load the pre-trained PPO agent from `agent.pth`
 2. If not using `--run-only`, train the agent for additional iterations
 3. Create a parking environment
 4. Run the simulation showing the car navigating to random goal points
@@ -67,7 +67,7 @@ The script will:
 ```
 auto_park/
 ├── README.md               # Project documentation
-├── agent.py               # TRPO agent implementation
+├── agent.py               # PPO agent implementation
 ├── agent.pth              # Trained model weights
 ├── agent_checkpoints/     # Saved model checkpoints
 ├── main.py               # Main script to run the simulation
@@ -77,7 +77,7 @@ auto_park/
 
 ## Results
 
-The TRPO model has been successfully trained and demonstrates effective navigation capabilities, consistently reaching random goal points from various starting positions. The trained model weights are stored in `agent.pth`.
+The PPO model has been successfully trained and demonstrates effective navigation capabilities, consistently reaching random goal points from various starting positions. The trained model weights are stored in `agent.pth`.
 
 ## Course Information
 
