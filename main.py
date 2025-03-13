@@ -4,6 +4,7 @@ import torch
 import argparse
 from agent import TRPOAgent
 from stable_baselines3 import A2C
+from CAN_commands import convert_throttle_to_CAN, convert_steering_to_CAN, print_CAN_message
 
 LOAD_AGENT="parking_agent_v0"
 
@@ -37,8 +38,17 @@ def main():
 
 	while True:
 		action = agent(ob)
+
+	# action array is returned by the agen as [throttle, steering_angle]
+		throttle_value = action[0]
+		steering_angle = action[1]
+		#print(f"Throttle: {throttle_value}, Steering Angle: {steering_angle}")
+
+	# Convert and print the CAN messages
+		print(f"Throttle {print_CAN_message(convert_throttle_to_CAN(throttle_value))}, Steering {print_CAN_message(convert_steering_to_CAN(steering_angle))}")
+
 		ob, reward, done, info = env.step(action)
-		print(reward)
+		print("Reward: ",reward)
 		env.render()
 		if done:
 			ob = env.reset()
