@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auto Park Evaluation Results</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #3498db;
+        }
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .caption {
+            font-style: italic;
+            color: #666;
+            margin-top: 5px;
+        }
+        ul {
+            background-color: #f9f9f9;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        strong {
+            color: #2c3e50;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.8em;
+            color: #777;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Auto Park Evaluation Results</h1>
+
+<h2>3 Results</h2>
+
+<ul>
+<li><strong>Sim success rate – 100.00% over 100 random scenarios.</strong></li>
+<p></ul>  - The agent successfully parked in all test scenarios, demonstrating reliable performance.</p>
+
+<ul>
+<li><strong>Avg time‑to‑park – 5.15 s (constraint: ≤ 60 s).</strong></li>
+<p></ul>  - The agent parks vehicles quickly, well below the 60-second constraint.</p>
+
+<ul>
+<li><strong>Trajectory smoothness – peak jerk 510.36 m/s³; exceeds comfort spec.</strong></li>
+<p></ul>  - While functional, the high jerk indicates a need for controller tuning to improve passenger comfort.</p>
+
+<ul>
+<li><strong>HIL test – CAN gateway drives APA ECU; zero packet loss at 500 kbps.</strong></li>
+<p></ul>  - Hardware-in-the-loop testing verified reliable CAN communication with no packet loss.</p>
+
+<h2>Detailed Analysis</h2>
+
+<h3>Success Rate & Reliability</h3>
+<p><div class="image-container"><img src="report/dashboard.png" alt="Dashboard" /><p class="caption">Dashboard</p></div></p>
+
+<p>The 100% success rate over 100 random scenarios demonstrates the robustness of our autonomous parking system. The agent consistently reaches its target parking position regardless of the starting position or goal location, showing excellent generalization capabilities.</p>
+
+<p>Key observations:</p>
+<ul>
+<li>Perfect reliability in all test conditions</li>
+<li>Consistent performance across varying parking scenarios</li>
+<li>Capable of handling different goal positions in all quadrants of the test environment</li>
+<p></ul></p>
+<h3>Time Efficiency</h3>
+<p><div class="image-container"><img src="report/time_to_park_viz.png" alt="Time Distribution" /><p class="caption">Time Distribution</p></div></p>
+
+<p>The time-to-park analysis reveals exceptional efficiency, with vehicles reaching their parking spots in just over 5 seconds on average.</p>
+
+<p>Key statistics:</p>
+<ul>
+<li><strong>Average</strong>: 5.15s</li>
+<li><strong>Median</strong>: 5.04s</li>
+<li><strong>Minimum</strong>: 3.13s</li>
+<li><strong>Maximum</strong>: 10.03s</li>
+<li><strong>Standard Deviation</strong>: 1.14s</li>
+<p></ul></p>
+<p>The tight distribution of parking times indicates consistent performance, with all scenarios completing well under the 60-second constraint. This efficiency makes the system highly practical for real-world applications.</p>
+
+<h3>Motion Smoothness</h3>
+<p><div class="image-container"><img src="report/jerk_distribution.png" alt="Jerk Distribution" /><p class="caption">Jerk Distribution</p></div></p>
+<p><div class="image-container"><img src="report/jerk_cumulative.png" alt="Jerk Cumulative" /><p class="caption">Jerk Cumulative</p></div></p>
+
+<p>The trajectory smoothness analysis identified issues that need to be addressed:</p>
+
+<ul>
+<li><strong>Peak jerk</strong>: 510.36 m/s³ (exceeds comfort threshold of 10 m/s³)</li>
+<li><strong>Average jerk</strong>: 14.63 m/s³</li>
+<li><strong>Median jerk</strong>: 3.29 m/s³</li>
+<li><strong>95th percentile</strong>: 54.12 m/s³</li>
+<p></ul></p>
+<p>While most of the motion has reasonable jerk values (median below comfort threshold), the high peak values indicate abrupt changes in acceleration that would be perceived as jerky by passengers. The cumulative distribution shows that approximately 65% of jerk measurements fall below the comfort threshold, but the remaining 35% contribute to an uncomfortable ride experience.</p>
+
+<h3>Parking Trajectories</h3>
+<p><div class="image-container"><img src="report/trajectories.png" alt="Trajectories" /><p class="caption">Trajectories</p></div></p>
+
+<p>The visualization of parking trajectories shows the path taken by the vehicle in representative scenarios. The system demonstrates efficient path planning, finding direct routes to the target location. All trajectories successfully reach their goals, though some show more complex paths than others.</p>
+
+<p>Observations:</p>
+<ul>
+<li>Shortest paths generally correspond to faster parking times</li>
+<li>The system prioritizes direct routes when possible</li>
+<li>All trajectories maintain appropriate clearance from the environment boundaries</li>
+<p></ul></p>
+<h2>Communication Reliability</h2>
+
+<p>The CAN communication testing confirmed reliable data transmission at the required 500 kbps rate. Zero packet loss was observed during the testing period, indicating a robust communication channel between the control system and the vehicle actuators.</p>
+
+<h2>Next Steps</h2>
+
+<p>1. <strong>Improve Motion Smoothness</strong>: Implement jerk constraints in the control algorithm to improve passenger comfort while maintaining performance.</p>
+<p>   - Add explicit jerk limits in the motion planning stage</p>
+<p>   - Implement trajectory smoothing techniques</p>
+<p>   - Consider adding a cost term for jerk minimization in the reward function</p>
+
+<p>2. <strong>Extended Scenario Testing</strong>: Test the system in more complex parking scenarios with obstacles and tight spaces.</p>
+<p>   - Add static obstacles to the environment</p>
+<p>   - Test with narrower parking spots</p>
+<p>   - Evaluate parallel parking capabilities</p>
+
+<p>3. <strong>Integration Testing</strong>: Perform full vehicle integration testing with the complete APA ECU in a test vehicle.</p>
+<p>   - Validate control signals on actual hardware</p>
+<p>   - Test boundary conditions and failure modes</p>
+<p>   - Measure real-world performance metrics</p>
+
+<p>4. <strong>Calibration</strong>: Fine-tune controller parameters to balance between efficiency and comfort.</p>
+<p>   - Optimize control gains for smoother operation</p>
+<p>   - Implement adaptive parameter tuning based on parking scenario</p>
+<p>   - Consider different modes (comfort vs. speed) for user preference </p>
+    <div class="footer">
+        <p>Generated on April 22, 2025 | Auto Park Evaluation</p>
+    </div>
+</body>
+</html>

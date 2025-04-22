@@ -3,4 +3,9 @@ pybullet
 stable-baselines3
 numpy==1.23.1
 shimmy
+torch
+matplotlib
+pandas
+tqdm
+python-can
 
