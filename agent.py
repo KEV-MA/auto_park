@@ -232,6 +232,7 @@ class TRPOAgent:
 
         # Initialize env
         env = gym.make(env_name)
+        env.save_paths()
         if seed is not None:
             torch.manual_seed(seed)
             env.seed(seed)
@@ -297,6 +298,6 @@ class TRPOAgent:
         }, path)
 
     def load_model(self, path):
-        checkpoint = torch.load(path, weights_only=False)
+        checkpoint = torch.load(path)
         self.policy.load_state_dict(checkpoint['policy'])
         self.logstd = checkpoint['logstd'].to(self.device)
