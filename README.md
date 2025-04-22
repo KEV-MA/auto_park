@@ -1,6 +1,96 @@
-# Auto Park
+# Auto Park System
 
-A reinforcement learning project for ME 599 at the University of Waterloo that demonstrates autonomous parking capabilities using Trust Region Policy Optimization (TRPO). The model successfully navigates a car from a starting position to randomly generated goal points.
+This repository contains an Autonomous Parking Assist (APA) system using reinforcement learning.
+
+## Setup
+
+1. Create a virtual environment:
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
+
+2. Install the dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+## Components
+
+- `main.py`: Main script to train and run the parking agent
+- `agent.py`: Implementation of the TRPO reinforcement learning agent
+- `sim_env/`: Simulation environment for the parking scenario
+- `CAN_commands.py`: Functions to convert control signals to CAN messages
+- `evaluate.py`: Evaluation script to measure performance metrics
+
+## Running the Agent
+
+To train and run the agent:
+```bash
+python main.py
+```
+
+To only run a pre-trained agent:
+```bash
+python main.py --run-only
+```
+
+With GUI visualization:
+```bash
+python main.py --gui
+```
+
+## Evaluation
+
+To evaluate the agent's performance and generate metrics:
+```bash
+python evaluate.py
+```
+
+Options for evaluation:
+- `--scenarios N`: Number of scenarios to evaluate (default: 100)
+- `--gui`: Enable GUI visualization
+- `--can-test`: Run HIL test with CAN communication
+
+Example:
+```bash
+python evaluate.py --scenarios 100 --gui
+```
+
+## Performance Metrics
+
+The evaluation script generates the following metrics:
+
+1. Sim success rate - Percentage of successful parking maneuvers over random scenarios
+2. Avg time-to-park - Average time in seconds to complete parking
+3. Trajectory smoothness - Measures peak jerk (m/s³) for comfort assessment
+4. HIL test - Tests CAN communication at 500 kbps
+
+Results are displayed in the console and saved to `evaluation_results.csv`.
+
+## CAN Bus Testing
+
+For CAN bus testing, you need to set up a virtual CAN interface:
+
+```bash
+# Load the vcan kernel module
+sudo modprobe vcan
+
+# Create a virtual CAN interface
+sudo ip link add dev vcan0 type vcan
+sudo ip link set up vcan0
+
+# Run the evaluation with CAN testing
+python evaluate.py --can-test
+```
+
+## Visualizations
+
+When running with the `--gui` option, the evaluation script generates plots:
+- Time-to-park distribution
+- Jerk distribution
+
+These plots are saved as PNG files in the project directory.
 
 ## Project Overview
 
@@ -9,58 +99,6 @@ This project implements a TRPO (Trust Region Policy Optimization) reinforcement 
 - Reach randomly generated goal points
 - Avoid obstacles (if present)
 - Find optimal paths to the target location
-
-## Installation
-
-### Prerequisites
-- Python 3.x
-- Git
-
-### Setup Instructions
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/auto_park.git
-cd auto_park
-```
-
-2. Create and activate a virtual environment:
-```bash
-python -m .venv venv
-source .venv/bin/activate  # On Linux/Mac
-# or
-.\.venv\Scripts\activate  # On Windows
-```
-
-3. Install the required dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-### Dependencies
-The project requires the following main packages:
-- gym - For reinforcement learning environments
-- pybullet - For physics simulation
-- stable-baselines3 - For RL algorithms implementation
-- numpy (version 1.23.1) - For numerical computations
-- shimmy - For environment compatibility
-
-## Usage
-
-To run the trained model:
-
-```bash
-python main.py  # Run with training
-python main.py --run-only  # Run without training
-```
-
-The script will:
-1. Load the pre-trained TRPO agent from `agent.pth`
-2. If not using `--run-only`, train the agent for additional iterations
-3. Create a parking environment
-4. Run the simulation showing the car navigating to random goal points
-5. Display the reward at each step
-6. Automatically reset when the goal is reached
 
 ## Project Structure
 
