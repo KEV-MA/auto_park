@@ -1,0 +1,4 @@
+--- EVALUATION RESULTS ---
+Sim success rate: 100.00% over 100 random scenarios.
+Avg time-to-park: 5.15 s (constraint: ≤ 60 s).
+Trajectory smoothness - peak jerk: 510.36 m/s³; exceeds comfort spec.
