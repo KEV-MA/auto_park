@@ -49,8 +49,17 @@ The project requires the following main packages:
 To run the trained model:
 
 ```bash
-python main.py  # Run with training
-python main.py --run-only  # Run without training
+python main.py                    # Run with training
+python main.py --run-only         # Run without training
+python main.py --gui              # Run with gui
+```
+
+To run the custom TRPO trained model:
+
+```bash
+python main_custom.py             # Run with training
+python main_custom.py --run-only  # Run without training
+python main_custom.py --gui       # Run with gui
 ```
 
 The script will:
@@ -73,7 +82,7 @@ auto_park/
 ├── agent.pth             # Recently Trained model weights
 ├── main.py               # Run simulation using stable baseline models
 ├── main_custom.py        # Run simulation using custom TRPO model
-└── requirements.ttx      # Project dependencies
+└── requirements.txt      # Project dependencies
 ```
 
 ## Results
