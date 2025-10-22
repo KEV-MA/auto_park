@@ -13,8 +13,7 @@ This project implements a TRPO (Trust Region Policy Optimization) reinforcement 
 ## Installation
 
 ### Prerequisites
-- Python 3.x
-- Git
+- Python 3
 
 ### Setup Instructions
 
@@ -66,24 +65,32 @@ The script will:
 
 ```
 auto_park/
-├── README.md               # Project documentation
-├── agent.py               # TRPO agent implementation
-├── agent.pth              # Trained model weights
-├── agent_checkpoints/     # Saved model checkpoints
-├── main.py               # Main script to run the simulation
-├── requirements.txt       # Project dependencies
-└── sim_env/              # Simulation environment code
+├── README.md             # Project documentation
+├── sim_env/              # Simulation environment code
+├── agent_checkpoints/    # Manually archived model checkpoints
+├── checkpoints/          # Tensorboard model checkpoints
+├── agent.py              # Custom TRPO model implementation
+├── agent.pth             # Recently Trained model weights
+├── main.py               # Run simulation using stable baseline models
+├── main_custom.py        # Run simulation using custom TRPO model
+└── requirements.ttx      # Project dependencies
 ```
 
 ## Results
 
-The TRPO model has been successfully trained and demonstrates effective navigation capabilities, consistently reaching random goal points from various starting positions. The trained model weights are stored in `agent.pth`.
+The PPO and TRPO algorithms have been successfully used to train a simple neural network with 
+effective navigation capabilities, consistently reaching random goal points from 
+various starting positions. The policy creates a trajectory that minimizes distance and 
+time travelled to reach the goal. The trained model weights are stored 
+in `agent.pth`.  
 
-## Course Information
+Instead of the policy planning the trajectory, rrt star with reeds shepp algorithm was used to define a specific path for the car to follow. The policy would be learning how to control the car along that path.  
 
-This project was developed as part of ME 599 at the University of Waterloo.
+For these experiments, a policy could be learned to follow a particular path, but attempts to generalize the policy for any path fails even when trained on several dozen paths to random start and goal positions.  
+
+More experimentation with the neural network architecture to generalize a policy to control the car to park independent of the start and goal position is required.
 
 ## Contributors
 
-Kevin Ma
+Kevin Ma  
 Arjun Krishna
