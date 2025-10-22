@@ -4,11 +4,12 @@ import math
 
 
 class Car:
-    def __init__(self, client):
+    def __init__(self, client, base):
         self.client = client
         f_name = os.path.join(os.path.dirname(__file__), 'simplecar.urdf')
         self.car = p.loadURDF(fileName=f_name,
-                              basePosition=[0, 0, 0.1],
+                              basePosition=[base[0], base[1], 0.1],
+                              baseOrientation=[0, 0, math.sin(base[2]/2), math.cos(base[2]/2)],
                               physicsClientId=client)
 
         # Joint indices as found by p.getJointInfo()
@@ -30,8 +31,8 @@ class Car:
         throttle, steering_angle = action
 
         # Clip throttle and steering angle to reasonable values
-        throttle = min(max(throttle, 0), 1)
-        steering_angle = max(min(steering_angle, 0.6), -0.6)
+        throttle = min(max(throttle, -0.6), 0.6)
+        steering_angle = max(min(steering_angle, 0.8), -0.8)
 
         # Set the steering joint positions
         p.setJointMotorControlArray(self.car, self.steering_joints,
@@ -46,8 +47,8 @@ class Car:
         acceleration = self.c_throttle * throttle + friction
         # Each time step is 1/240 of a second
         self.joint_speed = self.joint_speed + 1/30 * acceleration
-        if self.joint_speed < 0:
-            self.joint_speed = 0
+        #if self.joint_speed < 0:
+        #    self.joint_speed = 0
 
         # Set the velocity of the wheel joints directly
         p.setJointMotorControlArray(
